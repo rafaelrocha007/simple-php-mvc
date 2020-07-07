@@ -1,0 +1,12 @@
+version: "3.4"
+services:
+  app:
+    environment:
+      - APACHE_DOC_ROOT=/var/www/html/public
+    container_name: php-mvc
+    image: webgriffe/php-apache-base
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    ports:
+      - 8001:80
