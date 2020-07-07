@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 class Router
 {
     /** 
@@ -60,8 +62,8 @@ class Router
     public function match($url)
     {
         foreach ($this->routes as $route => $params) {
+            $matches = [];
             if (preg_match($route, $url, $matches)) {
-                //$params = [];
                 foreach ($matches as $key => $match) {
                     if (is_string($key)) {
                         $params[$key] = $match;
@@ -84,5 +86,96 @@ class Router
     public function getParams()
     {
         return $this->params;
+    }
+
+    /** 
+     * Dispatch the route, creating the controller object and running the action method
+     * 
+     * @param string $url The route URL
+     * 
+     * @return void
+     */
+    public function dispatch($url)
+    {
+        $url = $this->removeQueryStringVariables($url);
+
+        if ($this->match($url)) {
+            $controllerName = $this->params['controller'];
+            $controllerName = $this->getNamespace() . $this->convertToStudlyCaps($controllerName);
+
+            if (class_exists($controllerName)) {
+                $controller = new $controllerName($this->params);
+
+                $action = $this->params['action'];
+                $action = $this->convertToCamelCase($action);
+
+                if (is_callable([$controller, $action])) {
+                    $controller->$action();
+                } else {
+                    echo "Method $action (in controller $controller) does not exist.";
+                }
+            } else {
+                echo "Controller class $controllerName not found.";
+            }
+        } else {
+            echo "No route matched.";
+        }
+    }
+
+    /** 
+     * Convert the string with hyphens to StudlyCaps
+     * e.g. post-authors => PostAuthors
+     * 
+     * @param string $string The string to convert
+     * 
+     * @return string
+     */
+    protected function convertToStudlyCaps($string)
+    {
+        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+    }
+
+    /** 
+     * Convert the string with hyphens to camelCase
+     * e.g. add-new => addNew
+     * 
+     * @param string $string The string to convert
+     * 
+     * @return string
+     */
+    protected function convertToCamelCase($string)
+    {
+        return lcfirst($this->convertToStudlyCaps($string));
+    }
+
+    protected function removeQueryStringVariables($url)
+    {
+        if ($url != '') {
+            $parts = explode('&', $url, 2);
+
+            if (strpos($parts[0], '=') === false) {
+                $url = $parts[0];
+            } else {
+                $url = '';
+            }
+        }
+
+        return $url;
+    }
+
+    /** 
+     * Get the namespace for the controller class. The namespace defined in the route
+     * parameters is added if present
+     * 
+     * @return string
+     */
+    protected function getNamespace()
+    {
+        $namespace = 'App\Controllers\\';
+        if (array_key_exists('namespace', $this->params)) {
+            $namespace .= $this->params['namespace'] . '\\';
+        }
+
+        return $namespace;
     }
 }

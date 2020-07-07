@@ -1,21 +1,21 @@
 <?php
-ini_set('display_errors', 1);
-require '../core/Router.php';
 
-$router = new Router();
+ini_set('display_errors', 1);
+
+spl_autoload_register(function ($class) {
+    $root = dirname(__DIR__);
+    $file = $root . '/' . str_replace('\\', '/', $class) . '.php';
+    if (is_readable($file)) {
+        require $file;
+    }
+});
+
+$router = new Core\Router();
 
 //Add the routes
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
-$router->add('posts', ['controller' => 'Posts', 'action' => 'index']);
 $router->add('{controller}/{action}');
-$router->add('/admin/{controller}/{action}');
 $router->add('{controller}/{id:\d+}/{action}');
+$router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
 
-$url = $_SERVER['QUERY_STRING'];
-
-if ($router->match($url)) {
-    echo '<pre> 123 ';
-    var_dump($router->getParams());
-} else {
-    echo 'No route found for URL ' . $url;
-}
+$router->dispatch($_SERVER['QUERY_STRING'] ?? '');
