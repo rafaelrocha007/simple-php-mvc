@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Exception;
+
 class Router
 {
     /** 
@@ -112,13 +114,13 @@ class Router
                 if (is_callable([$controller, $action])) {
                     $controller->$action();
                 } else {
-                    echo "Method $action (in controller $controller) does not exist.";
+                    throw new \Exception("Method $action (in controller $controller) does not exist.");
                 }
             } else {
-                echo "Controller class $controllerName not found.";
+                throw new \Exception("Controller class $controllerName not found.");
             }
         } else {
-            echo "No route matched.";
+            throw new \Exception("No route matched.");
         }
     }
 
