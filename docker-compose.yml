@@ -1,12 +1,19 @@
-version: "3.4"
+version: "3.1"
 services:
-  app:
-    environment:
-      - APACHE_DOC_ROOT=/var/www/html/public
-    container_name: php-mvc
-    image: webgriffe/php-apache-base
+  webserver:
+    image: nginx:alpine
+    container_name: php-mvc-webserver
+    working_dir: /application
     volumes:
-      - .:/var/www/html
-    working_dir: /var/www/html
+      - .:/application
+      - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - 8001:80
+      - "8001:80"
+
+  php-fpm:
+    build: phpdocker/php-fpm
+    container_name: php-mvc-php-fpm
+    working_dir: /application
+    volumes:
+      - .:/application
+      - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini

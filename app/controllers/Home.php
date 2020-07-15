@@ -19,6 +19,9 @@ class Home extends \Core\Controller
 
     public function indexAction()
     {
-        View::render('Home/index.php');
+        View::renderTemplate('Home/index.html.twig', [
+            'name' => 'User A',
+            'colors' => ['red', 'green', 'blue']
+        ]);
     }
 }

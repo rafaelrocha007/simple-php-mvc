@@ -8,8 +8,13 @@
 </head>
 
 <body>
-    <h1>Hello world!</h1>
+    <h1>Hello <?php echo htmlspecialchars($name) ?>!</h1>
     <p>Welcome to my MVC</p>
+    <ul>
+        <?php foreach ($colors as $color) { ?>
+            <li><?php echo htmlspecialchars($color); ?></li>
+        <?php } ?>
+    </ul>
 </body>
 
 </html>
