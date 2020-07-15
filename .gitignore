@@ -1,2 +1,4 @@
 vendor
-var
+var/**
+!var/logs/.gitkeep
+!var/cache/twig/.gitkeep

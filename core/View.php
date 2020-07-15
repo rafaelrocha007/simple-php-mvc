@@ -24,7 +24,7 @@ class View
         if ($twig === null) {
             $loader = new \Twig\Loader\FilesystemLoader('../app/views/');
             $twig = new \Twig\Environment($loader, [
-                'cache' => dirname(__DIR__) . '/var/cache',
+                'cache' => dirname(__DIR__) . '/var/cache/twig',
             ]);
         }
 

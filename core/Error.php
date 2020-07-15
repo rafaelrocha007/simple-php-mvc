@@ -13,10 +13,23 @@ class Error
 
     public static function exceptionHandler(\Exception $exception)
     {
-        echo '<h1>Fatal error</h1>';
-        echo '<p>Uncaught exception: \'' . get_class($exception) . '\'</p>';
-        echo '<p>Message: \'' . $exception->getMessage() . '\'</p>';
-        echo '<p>Stack trace: <pre> \'' . $exception->getTraceAsString() . '\'</pre></p>';
-        echo '<p>Thrown in \'' . $exception->getFile() . '\' on line \'' . $exception->getLine() . '\'</p>';
+        if (\App\Config::SHOW_ERRORS) {
+            echo '<h1>Fatal error</h1>';
+            echo '<p>Uncaught exception: \'' . get_class($exception) . '\'</p>';
+            echo '<p>Message: \'' . $exception->getMessage() . '\'</p>';
+            echo '<p>Stack trace: <pre>' . $exception->getTraceAsString() . '</pre></p>';
+            echo '<p>Thrown in \'' . $exception->getFile() . '\' on line \'' . $exception->getLine() . '\'</p>';
+        } else {
+            $log = dirname(__DIR__) . '/var/logs/' . date('Y-m-d') . '.txt';
+            ini_set('error_log', $log);
+
+            $message = 'Uncaught exception: \'' . get_class($exception);
+            $message .= 'Message: \'' . $exception->getMessage();
+            $message .= "\nStack trace: \n" . $exception->getTraceAsString();
+            $message .= "\nThrown in '" . $exception->getFile() . "' on line '" . $exception->getLine() . "\n\n";
+
+            error_log($message);
+            echo "<h1>An error occurred</h1>";
+        }
     }
 }

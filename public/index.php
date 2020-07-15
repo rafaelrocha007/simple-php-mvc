@@ -1,12 +1,14 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('error_reporting', E_ALL);
-
 /** 
  * Composer
  */
 require '../vendor/autoload.php';
+
+ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+set_error_handler('Core\Error::errorHandler');
+set_exception_handler('Core\Error::exceptionHandler');
 
 $router = new Core\Router();
 
