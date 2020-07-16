@@ -8,5 +8,5 @@ class Config
     const DB_NAME = 'php-mvc';
     const DB_USER = 'root';
     const DB_PASS = 'root';
-    const SHOW_ERRORS = true;
+    const SHOW_ERRORS = false;
 }
